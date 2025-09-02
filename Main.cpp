@@ -35,49 +35,88 @@ double applyOp(double l, double r, char op) {
 // Organise calculation based on operator precendence using Shunting Yard Algorithm
 double evaluateExpression(const std::string& expr) {
     std::stack<double> values;
-    std::stack<char> ops;
+    std::stack<char> operators;
     std::istringstream iss(expr);
     char token;
+    bool expectNumber = true; // For tracking if a number/operator is expected next. (true = number, false = operator).
 
+    // Loop through input from user
     while (iss >> token) {
+        // If digit or decimal
         if (isdigit(token) || token == '.') {
+            if (!expectNumber) {
+                throw std::runtime_error("Invalid syntax: numbers without operator");
+            }
             iss.putback(token);
             double value;
             iss >> value;
             values.push(value);
+            expectNumber = false;
         }
+
+        // If open bracket
         else if (token == '(') {
-            ops.push(token);
+            if (!expectNumber) {
+                throw std::runtime_error("Invalid syntax: missing operator before '('");
+            }
+            operators.push(token);
+            expectNumber = true;
         }
+        // check for close bracket
         else if (token == ')') {
-            while (!ops.empty() && ops.top() != '(') {
+            if (expectNumber) {
+                throw std::runtime_error("Invalid syntax: empty parentheses or missing value");
+            }
+            // Calculate everthing within brackets 1st.
+            while (!operators.empty() && operators.top() != '(') {
+                if (values.size() < 2) throw std::runtime_error("Invalid syntax: missing operand");
                 double val2 = values.top(); values.pop();
                 double val1 = values.top(); values.pop();
-                char op = ops.top(); ops.pop();
+                char op = operators.top(); operators.pop();
                 values.push(applyOp(val1, val2, op));
             }
-            if (!ops.empty()) ops.pop(); // Remove '('
+            if (operators.empty()) {
+                throw std::runtime_error("Unbalanced parentheses: extra ')'");
+            }
+            operators.pop(); // Remove '('
+            expectNumber = false;
         }
+
+        // If operator
         else if (token == '+' || token == '-' || token == '*' || token == '/') {
-            while (!ops.empty() && precedence(ops.top()) >= precedence(token)) {
+            if (expectNumber) {
+                throw std::runtime_error("Invalid syntax: operator without left operand");
+            }
+            while (!operators.empty() && operators.top() != '(' && precedence(operators.top()) >= precedence(token)) {
+                if (values.size() < 2) throw std::runtime_error("Invalid syntax: missing operand");
                 double val2 = values.top(); values.pop();
                 double val1 = values.top(); values.pop();
-                char op = ops.top(); ops.pop();
+                char op = operators.top(); operators.pop();
                 values.push(applyOp(val1, val2, op));
             }
-            ops.push(token);
+            operators.push(token);
+            expectNumber = true; 
         }
         else {
-            throw std::runtime_error("Invalid character in expression!");
+            throw std::runtime_error(std::string("Invalid character in expression: '") + token + "'");
         }
     }
 
-    // Apply remaining operators
-    while (!ops.empty()) {
+    if (expectNumber) {
+        throw std::runtime_error("Invalid syntax: expression ends with an operator");
+    }
+
+    while (!operators.empty()) {
+        if (operators.top() == '(') throw std::runtime_error("Unbalanced parentheses: missing ')'");
+        if (values.size() < 2) throw std::runtime_error("Invalid syntax: missing operand");
         double val2 = values.top(); values.pop();
         double val1 = values.top(); values.pop();
-        char op = ops.top(); ops.pop();
+        char op = operators.top(); operators.pop();
         values.push(applyOp(val1, val2, op));
+    }
+
+    if (values.size() != 1) {
+        throw std::runtime_error("Invalid syntax: unexpected error");
     }
 
     return values.top();
@@ -93,7 +132,7 @@ std::string toLowerCase(std::string str) {
 int main() {
     std::string input;
     std::cout << "=== Calculator ===\n";
-    std::cout << "Enter expression (e.g., 3+4 or 6*8) or 'exit' to quit.\n";
+    std::cout << "Enter expression (e.g., 3+4 or (5-4)/2) or 'exit' to quit.\n";
 
     while (true) {
         std::cout << "\nInput: ";
@@ -106,7 +145,7 @@ int main() {
             std::cout << "= " << result << "\n";
         }
         catch (const std::exception& e) {
-            std::cout << "Error: " << e.what() << "\n";
+            std::cout << e.what() << "\n";
         }
     }
     return 0;
