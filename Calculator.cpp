@@ -32,6 +32,8 @@ double Calculator::divide(double l, double r) const {
 }
 
 double Calculator::power(double l, double r) {
+    if (l == 0 && r == 0)
+        throw std::runtime_error("0^0 is undefined");
     return std::pow(l, r);
 }
 
@@ -79,7 +81,14 @@ std::vector<std::string> Calculator::tokenize(const std::string& expr) {
 
     for (size_t i = 0; i < expr.size(); ++i) {
         char c = expr[i];
-        if (isspace(c)) continue;
+
+        if (isspace(c)) {
+            if (!num.empty()) {
+                tokens.push_back(num);
+                num.clear();
+            }
+            continue;
+        }
 
         if (isdigit(c) || c == '.') {
             num += c;
@@ -94,7 +103,7 @@ std::vector<std::string> Calculator::tokenize(const std::string& expr) {
                 num.clear();
             }
 
-            // Check for functions
+            // Check for sqrt
             if (expr.substr(i, 4) == "sqrt") {
                 tokens.push_back("sqrt");
                 i += 3;
