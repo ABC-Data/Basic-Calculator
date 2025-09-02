@@ -1,7 +1,7 @@
 #include "Calculator.h"
 #include <stdexcept>
 
-Calculator::Calculator(double r, double l) : num1(r), num2(l) {}
+Calculator::Calculator(double r, double l) : lnum(r), rnum(l) {}
 
 void Calculator::setNumbers(double r, double l) {
     lnum = l;
