@@ -2,20 +2,31 @@
 #define CALCULATOR_H
 
 #include <string>
+#include <vector>
+#include <utility>
 
 class Calculator {
 public:
-	Calculator(double l = 0, double r = 0);
+	Calculator();
 	~Calculator();
 
-	void setNumbers(double l, double r);
-	double add() const;
-	double subtract() const;
-	double multiply() const;
-	double divide() const;
+	/* Public Functions */
+	double evaluate(const std::string& expr);
 
 private:
-	double lnum, rnum;
+	/* Private Functions */
+	// Base Operation Functions
+	double add(double l, double r) const;
+	double subtract(double l, double r) const;
+	double multiply(double l, double r) const;
+	double divide(double l, double r) const;
+
+	// Helper Functions
+	std::vector<std::string> tokenize(const std::string& expr);
+	void validateTokens(const std::vector<std::string>& tokens);
+	double evaluateTokens(const std::vector<std::string>& tokens);
+	double applyOp(double l, double r, char op);
+	int precedence(char op);
 };
 
 #endif
