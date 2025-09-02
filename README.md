@@ -1,11 +1,8 @@
 # Basic Calculator in C++
 
 <video width="640" height="360" controls autoplay muted loop>
-
 &nbsp;       <source src="Demo.mp4" type="video/mp4">
-
 &nbsp;       Your browser does not support the video tag.
-
 </video>
 
 ### *Description:*
