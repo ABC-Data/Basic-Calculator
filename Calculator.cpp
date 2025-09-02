@@ -3,6 +3,8 @@
 
 Calculator::Calculator(double l, double r) : lnum(l), rnum(r) {}
 
+Calculator::~Calculator() {}
+
 void Calculator::setNumbers(double l, double r) {
     lnum = l;
     rnum = r;
