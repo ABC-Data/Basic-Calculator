@@ -21,6 +21,8 @@ private:
 	double subtract(double l, double r) const;
 	double multiply(double l, double r) const;
 	double divide(double l, double r) const;
+	double power(double l, double r);
+	double squareRoot(double a);
 
 	// Helper Functions
 	std::vector<std::string> tokenize(const std::string& expr);
@@ -28,6 +30,7 @@ private:
 	double evaluateTokens(const std::vector<std::string>& tokens);
 	double applyOp(double l, double r, char op);
 	int precedence(char op);
+	bool isFunction(const std::string& token);
 
 	/* Private Variables */
 	std::vector<std::pair<std::string, double>> history;

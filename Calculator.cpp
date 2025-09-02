@@ -4,6 +4,7 @@
 #include <regex>
 #include <stdexcept>
 #include <iostream>
+#include <cmath>
 
 Calculator::Calculator() {}
 
@@ -30,10 +31,25 @@ double Calculator::divide(double l, double r) const {
     return l / r;
 }
 
+double Calculator::power(double l, double r) {
+    return std::pow(l, r);
+}
+
+double Calculator::squareRoot(double a) {
+    if (a < 0) throw std::runtime_error("Cannot sqrt negative number");
+    return std::sqrt(a);
+}
+
+// Check if a token is a function
+bool Calculator::isFunction(const std::string& token) {
+    return token == "sqrt";
+}
+
 // Function to get operator precedence
 int Calculator::precedence(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;
     return 0;
 }
 
@@ -48,7 +64,10 @@ double Calculator::applyOp(double l, double r, char op) {
         return multiply(l, r);
     case '/': 
         return divide(l, r);
-    default: throw std::runtime_error("Invalid operator!");
+    case '^': 
+        return power(l, r);
+    default: 
+        throw std::runtime_error("Invalid operator!");
     }
 }
 
@@ -66,7 +85,7 @@ std::vector<std::string> Calculator::tokenize(const std::string& expr) {
             num += c;
             expectNumber = false;
         }
-        else if (c == '-' && expectNumber) {
+        else if (c == '-' && expectNumber) { // unary minus
             num += c;
         }
         else {
@@ -74,7 +93,14 @@ std::vector<std::string> Calculator::tokenize(const std::string& expr) {
                 tokens.push_back(num);
                 num.clear();
             }
-            if (c == '(' || c == ')' || c == '+' || c == '*' || c == '/') {
+
+            // Check for functions
+            if (expr.substr(i, 4) == "sqrt") {
+                tokens.push_back("sqrt");
+                i += 3;
+                expectNumber = true;
+            }
+            else if (c == '(' || c == ')' || c == '+' || c == '*' || c == '/' || c == '^') {
                 tokens.push_back(std::string(1, c));
                 expectNumber = (c != ')');
             }
@@ -85,7 +111,6 @@ std::vector<std::string> Calculator::tokenize(const std::string& expr) {
             else {
                 throw std::runtime_error(std::string("Invalid character: ") + c);
             }
-            expectNumber = (c != ')');
         }
     }
 
@@ -98,28 +123,35 @@ void Calculator::validateTokens(const std::vector<std::string>& tokens) {
     if (tokens.empty()) throw std::runtime_error("Empty expression");
 
     int parenBalance = 0;
-    bool expectNumber = true;
+    bool expectNumberOrFunction = true;
 
-    for (const auto& t : tokens) {
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        const auto& t = tokens[i];
+
         if (t == "(") {
             parenBalance++;
-            expectNumber = true;
+            expectNumberOrFunction = true;
         }
         else if (t == ")") {
-            if (parenBalance == 0 || expectNumber)
+            if (parenBalance == 0 || expectNumberOrFunction)
                 throw std::runtime_error("Invalid parentheses or empty brackets");
             parenBalance--;
-            expectNumber = false;
+            expectNumberOrFunction = false;
         }
         else if (std::regex_match(t, std::regex(R"(-?\d+(\.\d+)?)"))) {
-            if (!expectNumber)
+            if (!expectNumberOrFunction)
                 throw std::runtime_error("Two numbers without operator");
-            expectNumber = false;
+            expectNumberOrFunction = false;
         }
-        else if (t == "+" || t == "-" || t == "*" || t == "/") {
-            if (expectNumber)
+        else if (t == "+" || t == "-" || t == "*" || t == "/" || t == "^") {
+            if (expectNumberOrFunction)
                 throw std::runtime_error("Operator without left operand");
-            expectNumber = true;
+            expectNumberOrFunction = true;
+        }
+        else if (isFunction(t)) {
+            if (i + 1 >= tokens.size() || tokens[i + 1] != "(")
+                throw std::runtime_error("Function must be followed by '('");
+            expectNumberOrFunction = true;
         }
         else {
             throw std::runtime_error("Invalid token: " + t);
@@ -127,47 +159,71 @@ void Calculator::validateTokens(const std::vector<std::string>& tokens) {
     }
 
     if (parenBalance != 0) throw std::runtime_error("Unbalanced parentheses");
-    if (expectNumber) throw std::runtime_error("Expression ends with an operator");
+    if (expectNumberOrFunction) throw std::runtime_error("Expression ends with an operator or incomplete function");
 }
 
 // Calculate tokens based on operator precendence using Shunting Yard Algorithm
 double Calculator::evaluateTokens(const std::vector<std::string>& tokens) {
     std::stack<double> values;
-    std::stack<char> ops;
+    std::stack<std::string> operators;
 
-    for (const auto& t : tokens) {
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        const std::string& t = tokens[i];
+
         if (std::regex_match(t, std::regex(R"(-?\d+(\.\d+)?)"))) {
             values.push(std::stod(t));
         }
+        else if (isFunction(t)) {
+            operators.push(t);
+        }
         else if (t == "(") {
-            ops.push('(');
+            operators.push(t);
         }
         else if (t == ")") {
-            while (!ops.empty() && ops.top() != '(') {
-                double val2 = values.top(); values.pop();
-                double val1 = values.top(); values.pop();
-                char op = ops.top(); ops.pop();
-                values.push(applyOp(val1, val2, op));
+            while (!operators.empty() && operators.top() != "(") {
+                std::string op = operators.top(); operators.pop();
+                if (isFunction(op)) {
+                    double val = values.top(); values.pop();
+                    values.push(squareRoot(val));
+                }
+                else {
+                    double val2 = values.top(); values.pop();
+                    double val1 = values.top(); values.pop();
+                    values.push(applyOp(val1, val2, op[0]));
+                }
             }
-            if (!ops.empty()) ops.pop(); // remove '('
+            if (!operators.empty()) operators.pop(); // remove '('
         }
         else { // operator
             char op = t[0];
-            while (!ops.empty() && ops.top() != '(' && precedence(ops.top()) >= precedence(op)) {
-                double val2 = values.top(); values.pop();
-                double val1 = values.top(); values.pop();
-                char op2 = ops.top(); ops.pop();
-                values.push(applyOp(val1, val2, op2));
+            while (!operators.empty() && operators.top() != "(" &&
+                ((isFunction(operators.top())) || precedence(operators.top()[0]) >= precedence(op))) {
+                std::string topOp = operators.top(); operators.pop();
+                if (isFunction(topOp)) {
+                    double val = values.top(); values.pop();
+                    values.push(squareRoot(val));
+                }
+                else {
+                    double val2 = values.top(); values.pop();
+                    double val1 = values.top(); values.pop();
+                    values.push(applyOp(val1, val2, topOp[0]));
+                }
             }
-            ops.push(op);
+            operators.push(t);
         }
     }
 
-    while (!ops.empty()) {
-        double val2 = values.top(); values.pop();
-        double val1 = values.top(); values.pop();
-        char op = ops.top(); ops.pop();
-        values.push(applyOp(val1, val2, op));
+    while (!operators.empty()) {
+        std::string op = operators.top(); operators.pop();
+        if (isFunction(op)) {
+            double val = values.top(); values.pop();
+            values.push(squareRoot(val));
+        }
+        else {
+            double val2 = values.top(); values.pop();
+            double val1 = values.top(); values.pop();
+            values.push(applyOp(val1, val2, op[0]));
+        }
     }
 
     return values.top();
