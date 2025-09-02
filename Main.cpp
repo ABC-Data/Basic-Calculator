@@ -14,8 +14,9 @@ int main() {
     std::string input;
 
     std::cout << "=== Calculator ===\n";
-    std::cout << "Supports +, -, *, /, parentheses, negative numbers\n";
-    std::cout << "Enter expression (e.g., 3+4 or (5-4)/2) or 'exit' to quit\n";
+    std::cout << "Supports +, -, *, /, ^, parentheses, negative numbers and sqrt().\n";
+    std::cout << "Enter expression (e.g., 3+4 or (5-4)/2) to start.\n";
+    std::cout << "Enter 'history' to view previous expressions or 'exit' to quit.\n";
 
     while (true) {
         std::cout << "\nInput: ";

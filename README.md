@@ -1,8 +1,16 @@
 # Basic Calculator in C++
 
+<video width="640" height="360" controls autoplay muted loop>
+
+&nbsp;       <source src="Demo.mp4" type="video/mp4">
+
+&nbsp;       Your browser does not support the video tag.
+
+</video>
+
 ### *Description:*
 
-a simple command-line calculator application in a programming language of your choice (e.g., C++, C#, Java). The application allows users to perform arithmetic operations (addition, subtraction, multiplication, division, exponential and square root) on two or more numbers. 
+a simple command-line calculator application in a programming language of your choice (e.g., C++, C#, Java). The application allows users to perform arithmetic operations (addition, subtraction, multiplication, division, exponential and square root) on two or more numbers.
 
 
 
