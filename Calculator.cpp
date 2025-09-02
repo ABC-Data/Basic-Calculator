@@ -1,9 +1,9 @@
 #include "Calculator.h"
 #include <stdexcept>
 
-Calculator::Calculator(double r, double l) : lnum(r), rnum(l) {}
+Calculator::Calculator(double l, double r) : lnum(l), rnum(r) {}
 
-void Calculator::setNumbers(double r, double l) {
+void Calculator::setNumbers(double l, double r) {
     lnum = l;
     rnum = r;
 }
