@@ -12,6 +12,7 @@ public:
 
 	/* Public Functions */
 	double evaluate(const std::string& expr);
+	void printHistory() const;
 
 private:
 	/* Private Functions */
@@ -27,6 +28,9 @@ private:
 	double evaluateTokens(const std::vector<std::string>& tokens);
 	double applyOp(double l, double r, char op);
 	int precedence(char op);
+
+	/* Private Variables */
+	std::vector<std::pair<std::string, double>> history;
 };
 
 #endif

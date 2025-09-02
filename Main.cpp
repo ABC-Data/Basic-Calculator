@@ -22,6 +22,10 @@ int main() {
         std::getline(std::cin, input);
         if (input.empty()) continue;
         if (toLowerCase(input) == "exit") break;
+        if (toLowerCase(input) == "history") {
+            calc.printHistory();
+            continue;
+        }
 
         try {
             double result = calc.evaluate(input);

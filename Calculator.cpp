@@ -7,7 +7,9 @@
 
 Calculator::Calculator() {}
 
-Calculator::~Calculator() {}
+Calculator::~Calculator() {
+    history.clear();
+}
 
 double Calculator::add(double l, double r) const {
     return l + r;
@@ -171,10 +173,21 @@ double Calculator::evaluateTokens(const std::vector<std::string>& tokens) {
     return values.top();
 }
 
-// 
 double Calculator::evaluate(const std::string& expr) {
     std::vector<std::string> tokens = tokenize(expr);
     validateTokens(tokens);
     double result = evaluateTokens(tokens);
+    history.push_back({ expr, result });
     return result;
+}
+
+void Calculator::printHistory() const {
+    if (history.empty()) {
+        std::cout << "No previous history.\n";
+        return;
+    }
+    int i = 1;
+    for (const auto& entry : history) {
+        std::cout << i++ << ") " << entry.first << " = " << entry.second << "\n";
+    }
 }

@@ -2,8 +2,18 @@
 
 
 
-Test command:
-g++ Main.cpp Calculator.cpp -o calculator
 
-./calculator
+
+### *Test command in Linux shell:*
+
+g++ Main.cpp Calculator.cpp -o calc
+
+./calc
+
+
+
+### *Instructions:*
+
+Type "**exit**" to exit the program.
+Type "**history**" to see the history of all calculations done.
 
