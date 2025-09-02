@@ -5,6 +5,7 @@
 #include <vector>
 #include <cctype>
 #include <stdexcept>
+#include <algorithm>
 #include "Calculator.h"
 
 // Function to get operator precedence
@@ -44,6 +45,18 @@ double evaluateExpression(const std::string& expr) {
             double value;
             iss >> value;
             values.push(value);
+        }
+        else if (token == '(') {
+            ops.push(token);
+        }
+        else if (token == ')') {
+            while (!ops.empty() && ops.top() != '(') {
+                double val2 = values.top(); values.pop();
+                double val1 = values.top(); values.pop();
+                char op = ops.top(); ops.pop();
+                values.push(applyOp(val1, val2, op));
+            }
+            if (!ops.empty()) ops.pop(); // Remove '('
         }
         else if (token == '+' || token == '-' || token == '*' || token == '/') {
             while (!ops.empty() && precedence(ops.top()) >= precedence(token)) {
