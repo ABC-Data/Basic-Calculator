@@ -8,7 +8,7 @@ The Basic Calculator is designed using Object-Oriented Programming (OOP) princip
 
 #### *The application is designed using object-oriented programming(OOP) principles:*  
 
-**Encapsulation** is achieved by organizing related data and behaviour into separate classes, restricting direct access to internal data. For example, the Calculator class handles the workflow by combining parsing, evaluation, and history management. Internally, it holds instances of Tokenizer, Evaluator, and History privately. Users interact only through the calculate() method, which hides internal complexity. History stores previous calculations in a private records vector and exposes controlled methods add(), print(), and clear(). Evaluator \& Tokenizer keeps internal computation and tokenization details private, users do not access stacks or parsing logic directly.  
+**Encapsulation** is achieved by organizing related data and behaviour into separate classes, restricting direct access to internal data. For example, the Calculator class handles the workflow by combining parsing, evaluation, and history management. Internally, it holds instances of Tokenizer, Evaluator, and History privately. Users interact only through the evaluate() method, which hides internal complexity. History stores previous calculations in a private records vector and exposes controlled methods add(), print(), and clear(). Evaluator \& Tokenizer keeps internal computation and tokenization details private, users do not access stacks or parsing logic directly.  
 
 
 
