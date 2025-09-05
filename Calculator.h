@@ -1,9 +1,11 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
+#pragma once
 #include <string>
 #include <vector>
 #include <utility>
+#include "History.h"
 
 class Calculator {
 public:
@@ -33,7 +35,7 @@ private:
 	bool isFunction(const std::string& token);
 
 	/* Private Variables */
-	std::vector<std::pair<std::string, double>> history;
+	History history;
 };
 
 #endif

@@ -242,17 +242,10 @@ double Calculator::evaluate(const std::string& expr) {
     std::vector<std::string> tokens = tokenize(expr);
     validateTokens(tokens);
     double result = evaluateTokens(tokens);
-    history.push_back({ expr, result });
+    history.add(expr, result);
     return result;
 }
 
 void Calculator::printHistory() const {
-    if (history.empty()) {
-        std::cout << "No previous history.\n";
-        return;
-    }
-    int i = 1;
-    for (const auto& entry : history) {
-        std::cout << i++ << ") " << entry.first << " = " << entry.second << "\n";
-    }
+    history.print();
 }
