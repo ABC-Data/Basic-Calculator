@@ -2,15 +2,31 @@
 
 ### *Description:*
 
-a simple command-line calculator application in C++. The application allows users to perform arithmetic operations (addition, subtraction, multiplication, division, exponential and square root) on two or more numbers.
+The Basic Calculator is designed using Object-Oriented Programming (OOP) principles allowing users to input arithmetic expressions with multiple operators (+, -, \*, /, ^, sqrt) and parentheses, and it outputs the correct result while maintaining a history of previous calculations.  
 
-The application is designed using object-oriented programming principles, encapsulating all functionality within a Calculator class. The class handles expression parsing, validation, evaluation, and history tracking, providing error handling for invalid input, incomplete expressions, division by zero, and unbalanced parentheses.
+
+
+#### *The application is designed using object-oriented programming(OOP) principles:*  
+
+**Encapsulation** is achieved by organizing related data and behaviour into separate classes, restricting direct access to internal data. For example, the Calculator class handles the workflow by combining parsing, evaluation, and history management. Internally, it holds instances of Tokenizer, Evaluator, and History privately. Users interact only through the calculate() method, which hides internal complexity. History stores previous calculations in a private records vector and exposes controlled methods add(), print(), and clear(). Evaluator \& Tokenizer keeps internal computation and tokenization details private, users do not access stacks or parsing logic directly.  
+
+
+
+**Inheritance** is demonstrated in the Operation hierarchy, the base abstract class Operation defines the interface apply(double lhs, double rhs) and symbol(). Derived classes implement specific operations like AddOperation, SubtractOperation, MultiplyOperation, DivideOperation, PowerOperation, and SqrtOperation.  
+
+
+
+**Polymorphism** is applied through virtual functions in the Operation class, where Evaluator stores a collection of operations using std::unique\_ptr<Operation>. When evaluating an expression, Evaluator calls apply() on an Operation pointer. The actual derived class implementation executes depending on the operation type (AddOperation, SqrtOperation, etc.).  
+
+
+
+**Abstraction** is shown by hiding complex implementation details behind the History, Tokenizer \& Evaluator class. Where the Calculator class only exposes simple functions that integrates all components, not showing the stack-based evaluation or operator precedence logic.  
 
 
 
 ### *Test command in Linux shell:*
 
-g++ Main.cpp Calculator.cpp History.cpp Tokenizer.cpp Evaluator.cpp -o calc    
+g++ Main.cpp Calculator.cpp History.cpp Tokenizer.cpp Evaluator.cpp -o calc  
 ./calc
 
 
