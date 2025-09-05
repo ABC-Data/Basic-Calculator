@@ -6,6 +6,7 @@
 #include <vector>
 #include <utility>
 #include "History.h"
+#include "Tokenizer.h"
 
 class Calculator {
 public:
@@ -27,8 +28,6 @@ private:
 	double squareRoot(double a);
 
 	// Helper Functions
-	std::vector<std::string> tokenize(const std::string& expr);
-	void validateTokens(const std::vector<std::string>& tokens);
 	double evaluateTokens(const std::vector<std::string>& tokens);
 	double applyOp(double l, double r, char op);
 	int precedence(char op);
@@ -36,6 +35,7 @@ private:
 
 	/* Private Variables */
 	History history;
+	Tokenizer tokenizer;
 };
 
 #endif
