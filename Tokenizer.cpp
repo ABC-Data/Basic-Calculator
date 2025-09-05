@@ -68,11 +68,13 @@ void Tokenizer::validateTokens(const std::vector<std::string>& tokens) {
         }
         else if (t == ")") {
             balance--;
-            if (balance < 0) throw std::runtime_error("Mismatched parentheses");
+            if (balance < 0) 
+                throw std::runtime_error("Mismatched parentheses");
             expectNumberOrFunction = false;
         }
         else if (t == "sqrt") {
-            if (!expectNumberOrFunction) throw std::runtime_error("Invalid sqrt placement");
+            if (!expectNumberOrFunction) 
+                throw std::runtime_error("Invalid sqrt placement");
             expectNumberOrFunction = true;
         }
         else if (std::regex_match(t, std::regex(R"(-?\d+(\.\d+)?)"))) {
@@ -90,8 +92,10 @@ void Tokenizer::validateTokens(const std::vector<std::string>& tokens) {
         }
     }
 
-    if (balance != 0) throw std::runtime_error("Unbalanced parentheses");
-    if (expectNumberOrFunction) throw std::runtime_error("Expression ends with operator or incomplete function");
+    if (balance != 0) 
+        throw std::runtime_error("Unbalanced parentheses");
+    if (expectNumberOrFunction) 
+        throw std::runtime_error("Expression ends with operator or incomplete function");
 }
 
 

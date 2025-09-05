@@ -10,7 +10,7 @@ The application is designed using object-oriented programming principles, encaps
 
 ### *Test command in Linux shell:*
 
-g++ Main.cpp Calculator.cpp -o calc  
+g++ Main.cpp Calculator.cpp History.cpp Tokenizer.cpp Evaluator.cpp -o calc    
 ./calc
 
 
@@ -46,7 +46,7 @@ Functions: sqrt(16)+2^3 -> = 12
 
 Empty input -> continues.  
 Input characters(eg. **3c + 4**) -> error-handling Invalid character.  
-Consecutives operations(eg. **3++4**) -> error-handling Operator without left operand.  
+Consecutives operations(eg. **3++4**) -> error-handling Operator in invalid position.  
 Consecutives numbers with space(eg. **3 3**) -> error-handling Two numbers without operator.  
 Division by 0(eg. **3/0** or **1/(2-2)**) -> error-handling Division by zero!  
 Missing parenthesis(eg. **(3+4** ) -> error-handling Unbalanced parentheses.  

@@ -7,6 +7,7 @@
 #include <utility>
 #include "History.h"
 #include "Tokenizer.h"
+#include "Evaluator.h"
 
 class Calculator {
 public:
@@ -19,23 +20,12 @@ public:
 
 private:
 	/* Private Functions */
-	// Base Operation Functions
-	double add(double l, double r) const;
-	double subtract(double l, double r) const;
-	double multiply(double l, double r) const;
-	double divide(double l, double r) const;
-	double power(double l, double r);
-	double squareRoot(double a);
 
-	// Helper Functions
-	double evaluateTokens(const std::vector<std::string>& tokens);
-	double applyOp(double l, double r, char op);
-	int precedence(char op);
-	bool isFunction(const std::string& token);
 
 	/* Private Variables */
 	History history;
 	Tokenizer tokenizer;
+	Evaluator evaluator;
 };
 
 #endif
